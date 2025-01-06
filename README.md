@@ -17,8 +17,8 @@
 
 ##
 ### Images for example
-<img src="./images/shot0058.jpg" alt="Nacht Der Untoten" width="300" height="200">
-<img src="./images/shot0057.jpg" alt="Verruckt" width="300" height="200">
-<img src="./images/shot0056.jpg" alt="Shi No Numa" width="300" height="200">
-<img src="./images/shot0055.jpg" alt="Der Riese" width="300" height="200">
+<img src="./images/shot0058.jpg" alt="Nacht Der Untoten" width="400" height="225">
+<img src="./images/shot0057.jpg" alt="Verruckt" width="400" height="225">
+<img src="./images/shot0056.jpg" alt="Shi No Numa" width="400" height="225">
+<img src="./images/shot0055.jpg" alt="Der Riese" width="400" height="225">
 
