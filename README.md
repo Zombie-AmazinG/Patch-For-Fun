@@ -6,6 +6,8 @@
 - Seconds Per Horde (only on shi no numa and der riese)
 - Dog Tracker (only on der riese)
 - Trap Timer (except on nacht)
+- Flogger Timer
+- Zipline Timer
 - Zombie Counter
 - Health Bar
 
