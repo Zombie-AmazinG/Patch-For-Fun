@@ -17,7 +17,7 @@
 
 ##
 ### Images for example
-![Nacht Der Untoten]()
-![Verruckt]()
-![Shi No Numa]()
-![Der Riese]()
+![Nacht Der Untoten](./images/shot0058.jpg)
+![Verruckt](./images/shot0057.jpg)
+![Shi No Numa](./images/shot0056.jpg)
+![Der Riese](./images/shot0055.jpg)
