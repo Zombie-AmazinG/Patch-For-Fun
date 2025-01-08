@@ -15,21 +15,21 @@
 
 ### Commands to enable and disable the hud
 
-!lobby -> Total Timer
+!lobby  -> Total Timer
 <br>
-!round -> Round Timer
+!round  -> Round Timer
 <br>
-!box -> Box Hit Tracker
+!box    -> Box Hit Tracker
 <br>
-!sph -> Seconds Per Horde Calculator
+!sph    -> Seconds Per Horde Calculator
 <br>
-!dog -> Show the next round of dogs
+!dog    -> Show the next round of dogs
 <br>
 !health -> Health Counter
 <br>
 !zombie -> Zombie Counter
 <br>
-!trap -> Trap Timer
+!trap   -> Trap Timer
 
 ##
 
