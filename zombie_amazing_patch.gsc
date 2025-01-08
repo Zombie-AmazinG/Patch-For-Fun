@@ -14,6 +14,15 @@ init()
 	setDvar("player_strafeSpeedScale", 1);
 	setDvar("player_sprintStrafeSpeedScale", 1);
 	level thread onPlayerConnect();
+
+	level.timer_hud = 0;
+	level.round_timer_hud = 0;
+	level.box_hit_hud = 0;
+	level.sph_hud = 0;
+	level.next_dog_hud = 0;
+	level.health_hud = 0;
+	level.zombie_counter_hud = 0;
+	level.trap_timer_hud = 0;
 }
 
 onPlayerConnect()
@@ -36,10 +45,12 @@ onPlayerSpawned()
 		{
 			self.initial_spawn = 0;
             self thread start_message();
+			self thread readchat();
 			self thread lobby_timer();
 			self thread round_timer();
 			self thread reset_timer();
 			self thread sph();
+			self thread sph_hud();
 			self thread dog_tracker();
 			self thread health();
 			self thread zombie_counter();
@@ -144,6 +155,34 @@ start_message()
 	message_2 destroy();
 }
 
+////////////////////
+//  READ MESSAGE  //
+////////////////////
+readchat() 
+{
+    self endon("end_game");
+    while (true) 
+    {
+        level waittill("say", message, player);
+        msg = strtok(message, " ");
+
+        if(msg[0][0] != "!")
+            continue;
+
+        switch(msg[0])
+        {
+            case "!lobby": level.timer_hud = !level.timer_hud; break; 
+			case "!round": level.round_timer_hud = !level.round_timer_hud; break; 
+			case "!box": level.box_hit_hud = !level.box_hit_hud; break; 
+			case "!sph": level.sph_hud = !level.sph_hud; break; 
+			case "!dog": level.next_dog_hud = !level.next_dog_hud; break; 
+			case "!health": level.health_hud = !level.health_hud; break;
+			case "!zombie": level.zombie_counter_hud = !level.zombie_counter_hud; break;
+			case "!trap": level.trap_timer_hud = !level.trap_timer_hud; break;
+        }
+    }
+}
+
 /////////////////////////////
 //  TIMER AND ROUND TIMER  //
 /////////////////////////////
@@ -157,10 +196,21 @@ lobby_timer()
 	self.lobby_timer.vertAlign = "top";
 	self.lobby_timer.x = 5;
 	self.lobby_timer.y = 5;
-	self.lobby_timer.alpha = 1;
 	self.lobby_timer.label = "^6Total : ^5";
 	flag_wait("all_players_spawned");
 	self.lobby_timer setTimerUp(0);
+	while(true)
+	{
+		wait 0.1;
+		if (level.timer_hud)
+		{
+			self.lobby_timer.alpha = 1;
+		}
+		else
+		{
+			self.lobby_timer.alpha = 0;
+		}
+	}
 }
 
 round_timer()
@@ -172,10 +222,28 @@ round_timer()
 	self.round_timer.horzAlign = "left"; 
 	self.round_timer.vertAlign = "top";
 	self.round_timer.x = 5;
-	self.round_timer.y = 20;
-	self.round_timer.alpha = 1;
 	self.round_timer.label = "^6Round : ^5";
 	self.round_timer setText("0:00");
+	while(true)
+	{
+		wait 0.1;
+		if (level.round_timer_hud)
+		{
+			if (level.timer_hud)
+			{
+				self.round_timer.y = 20;
+			}
+			else
+			{
+				self.round_timer.y = 5;
+			}
+			self.round_timer.alpha = 1;
+		}
+		else
+		{
+			self.round_timer.alpha = 0;
+		}
+	}
 }
 
 reset_timer(){
@@ -225,7 +293,6 @@ sph()
 		self.sph = newclienthudelem(self);
 		self.sph.fontscale = 1.5;
 		self.sph.x = 5;
-		self.sph.y = 50;
 		self.sph.alpha = 1;
 		self.sph.alignx = "left";
 		self.sph.aligny = "top";
@@ -246,6 +313,72 @@ sph()
 			level waittill("start_of_round");
 			self.sph.time_start = gettime() / 1000;
     		self.sph.zombies_total_start = level.zombie_total + get_enemy_count();
+		}
+	}
+}
+
+sph_hud()
+{
+	while(true)
+	{
+		wait 0.1;
+		if (level.sph_hud)
+		{
+			if (level.box_hit_hud)
+			{
+				if (level.round_timer_hud)
+				{
+					if (level.timer_hud)
+					{
+						self.sph.y = 50;
+					}
+					else
+					{
+						self.sph.y = 35;
+					}
+				}
+				else
+				{
+					if (level.timer_hud)
+					{
+						self.sph.y = 35;
+					}
+					else
+					{
+						self.sph.y = 20;
+					}
+				}
+			}
+			else
+			{
+				if (level.round_timer_hud)
+				{
+					if (level.timer_hud)
+					{
+						self.sph.y = 35;
+					}
+					else
+					{
+						self.sph.y = 20;
+					}
+				}
+				else
+				{
+					if (level.timer_hud)
+					{
+						self.sph.y = 20;
+					}
+					else
+					{
+						self.sph.y = 5;
+					}
+				}
+			}
+			self.sph.alpha = 1;
+		}
+		else
+		{
+			self.sph.alpha = 0;
 		}
 	}
 }
@@ -277,7 +410,6 @@ dog_tracker()
 		self.next_dog = newclienthudelem(self);
 		self.next_dog.fontscale = 1.5;
 		self.next_dog.x = 5;
-		self.next_dog.y = 65;
 		self.next_dog.alignx = "left";
 		self.next_dog.aligny = "top";
 		self.next_dog.horzalign = "left";
@@ -287,10 +419,121 @@ dog_tracker()
 		while(true)
 		{
 			wait 0.1;
-			if(isDefined(level.next_dog_round))
+			if (level.next_dog_hud)
 			{
-				self.next_dog setvalue(level.next_dog_round);
+				if(level.sph_hud)
+				{
+					if (level.box_hit_hud)
+					{
+						if (level.round_timer_hud)
+						{
+							if (level.timer_hud)
+							{
+								self.next_dog.y = 65;
+							}
+							else
+							{
+								self.next_dog.y = 50;
+							}
+						}
+						else
+						{
+							if (level.timer_hud)
+							{
+								self.next_dog.y = 50;
+							}
+							else
+							{
+								self.next_dog.y = 35;
+							}
+						}
+					}
+					else
+					{
+						if (level.round_timer_hud)
+						{
+							if (level.timer_hud)
+							{
+								self.next_dog.y = 50;
+							}
+							else
+							{
+								self.next_dog.y = 35;
+							}
+						}
+						else
+						{
+							if (level.timer_hud)
+							{
+								self.next_dog.y = 35;
+							}
+							else
+							{
+								self.next_dog.y = 20;
+							}
+						}
+					}
+				}
+				else
+				{
+					if (level.box_hit_hud)
+					{
+						if (level.round_timer_hud)
+						{
+							if (level.timer_hud)
+							{
+								self.next_dog.y = 50;
+							}
+							else
+							{
+								self.next_dog.y = 35;
+							}
+						}
+						else
+						{
+							if (level.timer_hud)
+							{
+								self.next_dog.y = 35;
+							}
+							else
+							{
+								self.next_dog.y = 20;
+							}
+						}
+					}
+					else
+					{
+						if (level.round_timer_hud)
+						{
+							if (level.timer_hud)
+							{
+								self.next_dog.y = 35;
+							}
+							else
+							{
+								self.next_dog.y = 20;
+							}
+						}
+						else
+						{
+							if (level.timer_hud)
+							{
+								self.next_dog.y = 20;
+							}
+							else
+							{
+								self.next_dog.y = 5;
+							}
+						}
+					}
+				}
+				self.next_dog.alpha = 1;
 			}
+			else
+			{
+				self.next_dog.alpha = 0;
+			}
+			self.next_dog setvalue(level.next_dog_round);
 		}
 	}
 }
@@ -308,12 +551,19 @@ health()
 	self.vida_restante.x = 5; 
 	self.vida_restante.y = 365; 
 	self.vida_restante.fontscale = 1.5;
-    self.vida_restante.alpha = 1;
 	self.vida_restante.label = "^6Health : ^5";
 	while(true)
 	{
-		self.vida_restante setvalue(self.health);
 		wait 0.1;
+		if (level.health_hud)
+		{
+			self.vida_restante.alpha = 1;
+			self.vida_restante setvalue(self.health);
+		}
+		else
+		{
+			self.vida_restante.alpha = 0;
+		}
 	}
 }
 
@@ -330,13 +580,20 @@ zombie_counter()
 	self.zombiecounter.x = 0; 
 	self.zombiecounter.y = -20; 
 	self.zombiecounter.fontscale = 1.5;
-	self.zombiecounter.alpha = 1;
 	self.zombiecounter.label = "^6Zombies : ^5";
 
-    for(;;){
-		
-        self.zombiecounter setvalue(level.zombie_total + get_enemy_count());
-        wait 0.05;
+    for(;;)
+	{
+		wait 0.05;
+		if (level.zombie_counter_hud)
+		{
+			self.zombiecounter.alpha = 1;
+			self.zombiecounter setvalue(level.zombie_total + get_enemy_count());
+		}
+		else
+		{
+			self.zombiecounter.alpha = 0;
+		}
     }
 }
 
@@ -366,16 +623,43 @@ box_hits()
     self.box_hits.horzalign = "left";
     self.box_hits.vertalign = "top";
 	self.box_hits.x = 5;
-    self.box_hits.y = 35;
     self.box_hits.fontscale = 1.5;
-    self.box_hits.alpha = 1;
 	self.box_hits.label = "^6Box Hits : ^5";
 
 	while(true)
 	{
 		wait 0.1;
+		if (level.box_hit_hud)
+		{
+			if (level.round_timer_hud)
+			{
+				if (level.timer_hud)
+				{
+					self.box_hits.y = 35;
+				}
+				else
+				{
+					self.box_hits.y = 20;
+				}
+			}
+			else
+			{
+				if (level.timer_hud)
+				{
+					self.box_hits.y = 20;
+				}
+				else
+				{
+					self.box_hits.y = 5;
+				}
+			}
+			self.box_hits.alpha = 1;
+		}
+		else
+		{
+			self.box_hits.alpha = 0;
+		}
 		self.box_hits setvalue(level.box_hit_counter);
-		
 	}
 }
 
@@ -388,37 +672,44 @@ trap_timer_check()
     while(true)
     {
         player_points = self.score;
-        wait 0.1;
+		wait 0.1;
 
-		if (level.script == "nazi_zombie_asylum") //ver
+		if (level.trap_timer_hud)
 		{
-			if(player_points == (self.score + 1000) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
-        	{
-            self.activate_timer = true;
-            wait 50;    // You dont really need this, it prevents showing two timers when two traps are active
-        	}
-		}
+			if (level.script == "nazi_zombie_asylum") //ver
+			{
+				if(player_points == (self.score + 1000) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
+        		{
+        	    self.activate_timer = true;
+        	    wait 50;    // You dont really need this, it prevents showing two timers when two traps are active
+        		}
+			}
 
-		if (level.script == "nazi_zombie_factory") //der
+			if (level.script == "nazi_zombie_factory") //der
+			{
+				if(player_points == (self.score + 1000) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
+        		{
+        	    self.activate_timer = true;
+        	    wait 50;    // You dont really need this, it prevents showing two timers when two traps are active
+        		}
+			}
+
+			if (level.script == "nazi_zombie_sumpf") //snn
+			{
+				if(player_points == (self.score + 1000) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
+        		{
+        	    self.activate_timer = true;
+        	    wait 115;    // You dont really need this, it prevents showing two timers when two traps are active
+        		}
+			}
+			self.activate_timer = false;
+		}
+		else
 		{
-			if(player_points == (self.score + 1000) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
-        	{
-            self.activate_timer = true;
-            wait 50;    // You dont really need this, it prevents showing two timers when two traps are active
-        	}
+			self.trap_timer.alpha = 0;
+			self.trap_zipline.alpha = 0;
+			self.trap_flogger.alpha = 0;
 		}
-
-		if (level.script == "nazi_zombie_sumpf") //snn
-		{
-			if(player_points == (self.score + 1000) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
-        	{
-            self.activate_timer = true;
-            wait 115;    // You dont really need this, it prevents showing two timers when two traps are active
-        	}
-		}
-		
-
-        self.activate_timer = false;
     }
 }
 
@@ -428,18 +719,26 @@ zipline_check()
     while(true)
     {
         player_points = self.score;
-        wait 0.1;
+		wait 0.1;
 
-		if (level.script == "nazi_zombie_sumpf") //snn
+		if (level.trap_timer_hud)
 		{
-			if(player_points == (self.score + 1500) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
-        	{
-            self.activate_zipline = true;
-            wait 46;    // You dont really need this, it prevents showing two timers when two traps are active
-        	}
+			if (level.script == "nazi_zombie_sumpf") //snn
+			{
+				if(player_points == (self.score + 1500) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
+        		{
+        	    self.activate_zipline = true;
+        	    wait 46;    // You dont really need this, it prevents showing two timers when two traps are active
+        		}
+			}
+			self.activate_zipline = false;
 		}
-
-        self.activate_zipline = false;
+		else
+		{
+			self.trap_timer.alpha = 0;
+			self.trap_zipline.alpha = 0;
+			self.trap_flogger.alpha = 0;
+		}
     }
 }
 
@@ -449,18 +748,27 @@ flogger_check()
     while(true)
     {
         player_points = self.score;
-        wait 0.1;
+		wait 0.1;
 		
-		if (level.script == "nazi_zombie_sumpf") //snn
+		if (level.trap_timer_hud)
 		{
-			if(player_points == (self.score + 750) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
-        	{
-            self.activate_flogger = true;
-            wait 76;    // You dont really need this, it prevents showing two timers when two traps are active
-        	}
-		}
+			if (level.script == "nazi_zombie_sumpf") //snn
+			{
+				if(player_points == (self.score + 750) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
+        		{
+        	    self.activate_flogger = true;
+        	    wait 76;    // You dont really need this, it prevents showing two timers when two traps are active
+        		}
+			}
 
-        self.activate_flogger = false;
+        	self.activate_flogger = false;
+		}
+		else
+		{
+			self.trap_timer.alpha = 0;
+			self.trap_zipline.alpha = 0;
+			self.trap_flogger.alpha = 0;
+		}
     }
 }
 
@@ -473,32 +781,13 @@ trap_timer()
 	else
 	{
 		self.trap_timer = newclienthudelem( self );
-    	self.trap_timer.alignx = "left";
+    	self.trap_timer.alignx = "center";
     	self.trap_timer.aligny = "top";
-    	self.trap_timer.horzalign = "left";
+    	self.trap_timer.horzalign = "center";
     	self.trap_timer.vertalign = "top";
-		if (level.script == "nazi_zombie_sumpf") //snn
-		{
-			self.trap_timer.x = 5;
-    		self.trap_timer.y = 65;
-		}
-		else
-		{
-			self.trap_timer.x = 5;
-    		self.trap_timer.y = 80;
-		}
-
-		if (level.script == "nazi_zombie_asylum") //ver
-		{
-			self.trap_timer.x = 5;
-    		self.trap_timer.y = 50;
-		}
-		else
-		{
-			self.trap_timer.x = 5;
-    		self.trap_timer.y = 80;
-		}
     	self.trap_timer.fontscale = 1.5;
+		self.trap_timer.x = 0;
+		//self.trap_timer.y = 5;
     	self.trap_timer.alpha = 1;
 
     	while( 1 )
@@ -509,6 +798,7 @@ trap_timer()
 				if (level.script == "nazi_zombie_asylum") //ver
 				{
 					wait 0.1;
+					self.trap_timer.y = 5;
 					self.trap_timer.label = "^6Trap : ^2";
     	        	self.trap_timer.alpha = 1;
     	        	self.trap_timer settimer( 25 );
@@ -521,6 +811,7 @@ trap_timer()
 				if (level.script == "nazi_zombie_factory") //der
 				{
 					wait 0.1;
+					self.trap_timer.y = 5;
     	        	self.trap_timer.label = "^6Trap : ^2";
     	        	self.trap_timer.alpha = 1;
     	        	self.trap_timer settimer( 25 );
@@ -533,6 +824,32 @@ trap_timer()
 				if (level.script == "nazi_zombie_sumpf") //snn
 				{
 					wait 0.1;
+					if (self.activate_flogger)
+					{
+						if (self.activate_zipline)
+						{
+							self.trap_timer.y = 35;
+						}
+						else
+						{
+							self.trap_timer.y = 20;
+						}
+					}
+					else if (self.activate_zipline)
+					{
+						if (self.activate_flogger)
+						{
+							self.trap_timer.y = 35;
+						}
+						else
+						{
+							self.trap_timer.y = 20;
+						}
+					}
+					else
+					{
+						self.trap_timer.y = 5;
+					}
     	        	self.trap_timer.label = "^6Trap : ^2";
     	        	self.trap_timer.alpha = 1;
     	        	self.trap_timer settimer( 25 );
@@ -554,12 +871,12 @@ zipline_timer()
 	if (level.script == "nazi_zombie_sumpf") //snn
 	{
     	self.trap_zipline = newclienthudelem( self );
-    	self.trap_zipline.alignx = "left";
+    	self.trap_zipline.alignx = "center";
     	self.trap_zipline.aligny = "top";
-    	self.trap_zipline.horzalign = "left";
+    	self.trap_zipline.horzalign = "center";
     	self.trap_zipline.vertalign = "top";
-		self.trap_zipline.x = 5;
-    	self.trap_zipline.y = 95;
+		self.trap_zipline.x = 0;
+		//self.trap_zipline.y = 35;
     	self.trap_zipline.fontscale = 1.5;
     	self.trap_zipline.alpha = 1;
 
@@ -569,7 +886,33 @@ zipline_timer()
     	    wait 0.1;
     	    {
 				wait 0.1;
-				self.trap_zipline_text.alpha = 1;
+				if (self.activate_timer)
+				{
+					if (self.activate_flogger)
+					{
+						self.trap_zipline.y = 35;
+					}
+					else
+					{
+						self.trap_zipline.y = 20;
+					}
+				}
+				else if (self.activate_flogger)
+				{
+					if (self.activate_timer)
+					{
+						self.trap_zipline.y = 35;
+					}
+					else
+					{
+						self.trap_zipline.y = 20;
+					}
+				}
+				else
+				{
+					self.trap_zipline.y = 5;
+				}
+				self.trap_zipline.alpha = 1;
     	        self.trap_zipline.label = "^6Zipline : ^2";
     	        self.trap_zipline.alpha = 1;
     	        self.trap_zipline settimer( 6 );
@@ -589,12 +932,12 @@ flogger_timer()
 	if (level.script == "nazi_zombie_sumpf") //snn
 	{
 		self.trap_flogger = newclienthudelem( self );
-    	self.trap_flogger.alignx = "left";
+    	self.trap_flogger.alignx = "center";
     	self.trap_flogger.aligny = "top";
-    	self.trap_flogger.horzalign = "left";
+    	self.trap_flogger.horzalign = "center";
     	self.trap_flogger.vertalign = "top";
-		self.trap_flogger.x = 5;
-    	self.trap_flogger.y = 65;
+		self.trap_flogger.x = 0;
+		//self.trap_flogger.y = 20;
     	self.trap_flogger.fontscale = 1.5;
     	self.trap_flogger.alpha = 1;
 
@@ -604,6 +947,32 @@ flogger_timer()
     	        wait 0.1;
     	    {
 				wait 0.1;
+				if (self.activate_timer)
+				{
+					if (self.activate_zipline)
+					{
+						self.trap_flogger.y = 35;
+					}
+					else
+					{
+						self.trap_flogger.y = 20;
+					}
+				}
+				else if (self.activate_zipline)
+				{
+					if (self.activate_timer)
+					{
+						self.trap_flogger.y = 35;
+					}
+					else
+					{
+						self.trap_flogger.y = 20;
+					}
+				}
+				else
+				{
+					self.trap_flogger.y = 5;
+				}
     	        self.trap_flogger.label = "^6Flogger : ^2";
     	        self.trap_flogger.alpha = 1;
     	        self.trap_flogger settimer( 31 );
