@@ -15,42 +15,42 @@
 
 ### Commands to enable and disable the hud
 
-<div style="display: inline-block; border: 1px solid black; padding: 2px; border-radius: 3px;">
+<div style="display: inline-block; border: 1px solid white; padding: 2px; border-radius: 3px;">
     !lobby
 </div>
 -> Total Timer
 <br>
-<div style="display: inline-block; border: 1px solid black; padding: 2px; border-radius: 3px;">
+<div style="display: inline-block; border: 1px solid white; padding: 2px; border-radius: 3px;">
     !round
 </div>
 -> Round Timer
 <br>
-<div style="display: inline-block; border: 1px solid black; padding: 2px; border-radius: 3px;">
+<div style="display: inline-block; border: 1px solid white; padding: 2px; border-radius: 3px;">
     !box
 </div>
 -> Box Hit Tracker
 <br>
-<div style="display: inline-block; border: 1px solid black; padding: 2px; border-radius: 3px;">
+<div style="display: inline-block; border: 1px solid white; padding: 2px; border-radius: 3px;">
     !sph
 </div>
 -> Seconds Per Horde Calculator
 <br>
-<div style="display: inline-block; border: 1px solid black; padding: 2px; border-radius: 3px;">
+<div style="display: inline-block; border: 1px solid white; padding: 2px; border-radius: 3px;">
     !dog
 </div>
 -> Show the next round of dogs
 <br>
-<div style="display: inline-block; border: 1px solid black; padding: 2px; border-radius: 3px;">
+<div style="display: inline-block; border: 1px solid white; padding: 2px; border-radius: 3px;">
     !health
 </div>
 -> Health Counter
 <br>
-<div style="display: inline-block; border: 1px solid black; padding: 2px; border-radius: 3px;">
+<div style="display: inline-block; border: 1px solid white; padding: 2px; border-radius: 3px;">
     !zombie
 </div>
 -> Zombie Counter
 <br>
-<div style="display: inline-block; border: 1px solid black; padding: 2px; border-radius: 3px;">
+<div style="display: inline-block; border: 1px solid white; padding: 2px; border-radius: 3px;">
     !trap
 </div>
 -> Trap Timer
