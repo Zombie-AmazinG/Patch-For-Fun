@@ -31,6 +31,10 @@
 <br>
 !trap   -> Trap Timer
 
+### Example
+
+<img src="./images/readchat.png" alt="Nacht Der Untoten" width="400" height="225">
+
 ##
 
 ### Observation
