@@ -30,6 +30,25 @@
 !zombie -> Zombie Counter
 <br>
 !trap   -> Trap Timer
+<br>
+!times  -> Show your times
+- round 30
+- round 50
+- round 70
+- round 100
+- round 150
+- round 200
+- round 1000
+- round 2000
+- round 3000
+- round 4000
+- round 5000
+- round 6000
+- round 7000
+- round 8000
+- round 9000
+- round 10000
+- round 11000
 
 ### Example
 
