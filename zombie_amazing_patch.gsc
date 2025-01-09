@@ -23,6 +23,7 @@ init()
 	level.health_hud = 0;
 	level.zombie_counter_hud = 0;
 	level.trap_timer_hud = 0;
+	level.timestamps[0] = 0;
 }
 
 onPlayerConnect()
@@ -179,6 +180,7 @@ readchat()
 			case "!health": level.health_hud = !level.health_hud; break;
 			case "!zombie": level.zombie_counter_hud = !level.zombie_counter_hud; break;
 			case "!trap": level.trap_timer_hud = !level.trap_timer_hud; break;
+			case "!times": show_all_timestamps(); break;
         }
     }
 }
@@ -188,6 +190,7 @@ readchat()
 /////////////////////////////
 lobby_timer()
 {
+	level.FRFIX_START = int(getTime() / 1000);
 	self.lobby_timer = create_simple_hud( self );
 	self.lobby_timer.fontscale = 1.5;
 	self.lobby_timer.alignX = "left"; 
@@ -247,7 +250,6 @@ round_timer()
 }
 
 reset_timer(){
-
     while(true)
     {
         wait 0.05;
@@ -258,15 +260,13 @@ reset_timer(){
         
         endtime = GetTime();
         round_time = int((endtime - starttime)/1000);
-       
         while(level.zombie_total<1)
         {
             wait 0.05;
             self.round_timer setTimer(round_time); 
         }
-
         self.round_timer setTimerUp(0);
-
+		level thread show_split();
     }
     
 
@@ -281,6 +281,380 @@ is_round_end()
     if(level.zombie_total>0) return false;
 
     return true;
+}
+
+//////////////////
+//  SHOW TIMES  //
+//////////////////
+show_all_timestamps()
+{
+	//reset layouts
+	self.round_30 destroy();
+	self.round_50 destroy();
+	self.round_70 destroy();
+	self.round_100 destroy();
+	self.round_150 destroy();
+	self.round_200 destroy();
+	self.round_1000 destroy();
+	self.round_2000 destroy();
+	self.round_3000 destroy();
+	self.round_4000 destroy();
+	self.round_5000 destroy();
+	self.round_6000 destroy();
+	self.round_7000 destroy();
+	self.round_8000 destroy();
+	self.round_9000 destroy();
+	self.round_10000 destroy();
+	self.round_11000 destroy();
+
+	if (level.round_number > 29)
+	{
+		self.round_30 = create_simple_hud( self );
+		self.round_30.alignX = "right"; 
+		self.round_30.alignY = "bottom";
+		self.round_30.horzAlign = "right"; 
+		self.round_30.vertAlign = "bottom";
+		self.round_30.x = -5; 
+		self.round_30.y = -85; 
+		self.round_30.fontscale = 1.2;
+		self.round_30.label = "^1Round 30 : ^7";
+		self.round_30.alpha = 1;
+		self.round_30 setText(level.timestamps[1]);
+	}
+
+	if (level.round_number > 49)
+	{
+		self.round_50 = create_simple_hud( self );
+		self.round_50.alignX = "right"; 
+		self.round_50.alignY = "bottom";
+		self.round_50.horzAlign = "right"; 
+		self.round_50.vertAlign = "bottom";
+		self.round_50.x = -5; 
+		self.round_50.y = -95; 
+		self.round_50.fontscale = 1.2;
+		self.round_50.label = "^1Round 50 : ^7";
+		self.round_50.alpha = 1;
+		self.round_50 setText(level.timestamps[2]);
+	}
+
+	if (level.round_number > 69)
+	{
+		self.round_70 = create_simple_hud( self );
+		self.round_70.alignX = "right"; 
+		self.round_70.alignY = "bottom";
+		self.round_70.horzAlign = "right"; 
+		self.round_70.vertAlign = "bottom";
+		self.round_70.x = -5; 
+		self.round_70.y = -105; 
+		self.round_70.fontscale = 1.2;
+		self.round_70.label = "^1Round 70 : ^7";
+		self.round_70.alpha = 1;
+		self.round_70 setText(level.timestamps[3]);
+	}
+
+	if (level.round_number > 99)
+	{
+		self.round_100 = create_simple_hud( self );
+		self.round_100.alignX = "right"; 
+		self.round_100.alignY = "bottom";
+		self.round_100.horzAlign = "right"; 
+		self.round_100.vertAlign = "bottom";
+		self.round_100.x = -5; 
+		self.round_100.y = -115; 
+		self.round_100.fontscale = 1.2;
+		self.round_100.label = "^1Round 100 : ^7";
+		self.round_100.alpha = 1;
+		self.round_100 setText(level.timestamps[4]);
+	}
+
+	if (level.round_number > 149)
+	{
+		self.round_150 = create_simple_hud( self );
+		self.round_150.alignX = "right"; 
+		self.round_150.alignY = "bottom";
+		self.round_150.horzAlign = "right"; 
+		self.round_150.vertAlign = "bottom";
+		self.round_150.x = -5; 
+		self.round_150.y = -125; 
+		self.round_150.fontscale = 1.2;
+		self.round_150.label = "^1Round 150 : ^7";
+		self.round_150.alpha = 1;
+		self.round_150 setText(level.timestamps[5]);
+	}
+
+	if (level.round_number > 199)
+	{
+		self.round_200 = create_simple_hud( self );
+		self.round_200.alignX = "right"; 
+		self.round_200.alignY = "bottom";
+		self.round_200.horzAlign = "right"; 
+		self.round_200.vertAlign = "bottom";
+		self.round_200.x = -5; 
+		self.round_200.y = -135; 
+		self.round_200.fontscale = 1.2;
+		self.round_200.label = "^1Round 200 : ^7";
+		self.round_200.alpha = 1;
+		self.round_200 setText(level.timestamps[6]);
+	}
+
+	if (level.round_number > 999)
+	{
+		self.round_1000 = create_simple_hud( self );
+		self.round_1000.alignX = "right"; 
+		self.round_1000.alignY = "bottom";
+		self.round_1000.horzAlign = "right"; 
+		self.round_1000.vertAlign = "bottom";
+		self.round_1000.x = -5; 
+		self.round_1000.y = -145; 
+		self.round_1000.fontscale = 1.2;
+		self.round_1000.label = "^1Round 1000 : ^7";
+		self.round_1000.alpha = 1;
+		self.round_1000 setText(level.timestamps[7]);
+	}
+
+	if (level.round_number > 1999)
+	{
+		self.round_2000 = create_simple_hud( self );
+		self.round_2000.alignX = "right"; 
+		self.round_2000.alignY = "bottom";
+		self.round_2000.horzAlign = "right"; 
+		self.round_2000.vertAlign = "bottom";
+		self.round_2000.x = -5; 
+		self.round_2000.y = -155; 
+		self.round_2000.fontscale = 1.2;
+		self.round_2000.label = "^1Round 2000 : ^7";
+		self.round_2000.alpha = 1;
+		self.round_2000 setText(level.timestamps[8]);
+	}
+
+	if (level.round_number > 2999)
+	{
+		self.round_3000 = create_simple_hud( self );
+		self.round_3000.alignX = "right"; 
+		self.round_3000.alignY = "bottom";
+		self.round_3000.horzAlign = "right"; 
+		self.round_3000.vertAlign = "bottom";
+		self.round_3000.x = -5; 
+		self.round_3000.y = -165; 
+		self.round_3000.fontscale = 1.2;
+		self.round_3000.label = "^1Round 3000 : ^7";
+		self.round_3000.alpha = 1;
+		self.round_3000 setText(level.timestamps[9]);
+	}
+
+	if (level.round_number > 3999)
+	{
+		self.round_4000 = create_simple_hud( self );
+		self.round_4000.alignX = "right"; 
+		self.round_4000.alignY = "bottom";
+		self.round_4000.horzAlign = "right"; 
+		self.round_4000.vertAlign = "bottom";
+		self.round_4000.x = -5; 
+		self.round_4000.y = -175; 
+		self.round_4000.fontscale = 1.2;
+		self.round_4000.label = "^1Round 4000 : ^7";
+		self.round_4000.alpha = 1;
+		self.round_4000 setText(level.timestamps[10]);
+	}
+
+	if (level.round_number > 4999)
+	{
+		self.round_5000 = create_simple_hud( self );
+		self.round_5000.alignX = "right"; 
+		self.round_5000.alignY = "bottom";
+		self.round_5000.horzAlign = "right"; 
+		self.round_5000.vertAlign = "bottom";
+		self.round_5000.x = -5; 
+		self.round_5000.y = -185; 
+		self.round_5000.fontscale = 1.2;
+		self.round_5000.label = "^1Round 5000 : ^7";
+		self.round_5000.alpha = 1;
+		self.round_5000 setText(level.timestamps[11]);
+	}
+
+	if (level.round_number > 5999)
+	{
+		self.round_6000 = create_simple_hud( self );
+		self.round_6000.alignX = "right"; 
+		self.round_6000.alignY = "bottom";
+		self.round_6000.horzAlign = "right"; 
+		self.round_6000.vertAlign = "bottom";
+		self.round_6000.x = -5; 
+		self.round_6000.y = -195; 
+		self.round_6000.fontscale = 1.2;
+		self.round_6000.label = "^1Round 6000 : ^7";
+		self.round_6000.alpha = 1;
+		self.round_6000 setText(level.timestamps[12]);
+	}
+
+	if (level.round_number > 6999)
+	{
+		self.round_7000 = create_simple_hud( self );
+		self.round_7000.alignX = "right"; 
+		self.round_7000.alignY = "bottom";
+		self.round_7000.horzAlign = "right"; 
+		self.round_7000.vertAlign = "bottom";
+		self.round_7000.x = -5; 
+		self.round_7000.y = -205; 
+		self.round_7000.fontscale = 1.2;
+		self.round_7000.label = "^1Round 7000 : ^7";
+		self.round_7000.alpha = 1;
+		self.round_7000 setText(level.timestamps[13]);
+	}
+
+	if (level.round_number > 7999)
+	{
+		self.round_8000 = create_simple_hud( self );
+		self.round_8000 = create_simple_hud( self );
+		self.round_8000.alignX = "right"; 
+		self.round_8000.alignX = "right"; 
+		self.round_8000.alignY = "bottom";
+		self.round_8000.horzAlign = "right"; 
+		self.round_8000.vertAlign = "bottom";
+		self.round_8000.x = -5; 
+		self.round_8000.y = -215; 
+		self.round_8000.fontscale = 1.2;
+		self.round_8000.label = "^1Round 8000 : ^7";
+		self.round_8000.alpha = 1;
+		self.round_8000 setText(level.timestamps[14]);
+	}
+
+	if (level.round_number > 8999)
+	{
+		self.round_9000 = create_simple_hud( self );
+		self.round_9000.alignX = "right"; 
+		self.round_9000.alignY = "bottom";
+		self.round_9000.horzAlign = "right"; 
+		self.round_9000.vertAlign = "bottom";
+		self.round_9000.x = -5; 
+		self.round_9000.y = -225; 
+		self.round_9000.fontscale = 1.2;
+		self.round_9000.label = "^1Round 9000 : ^7";
+		self.round_9000.alpha = 1;
+		self.round_9000 setText(level.timestamps[15]);
+	}
+
+	if (level.round_number > 9999)
+	{
+		self.round_10000 = create_simple_hud( self );
+		self.round_10000.alignX = "right"; 
+		self.round_10000.alignY = "bottom";
+		self.round_10000.horzAlign = "right"; 
+		self.round_10000.vertAlign = "bottom";
+		self.round_10000.x = -5; 
+		self.round_10000.y = -235; 
+		self.round_10000.fontscale = 1.2;
+		self.round_10000.label = "^1Round 10000 : ^7";
+		self.round_10000.alpha = 1;
+		self.round_10000 setText(level.timestamps[16]);
+	}
+
+	if (level.round_number > 10999)
+	{
+		self.round_11000 = create_simple_hud( self );
+		self.round_11000.alignX = "right"; 
+		self.round_11000.alignY = "bottom";
+		self.round_11000.horzAlign = "right"; 
+		self.round_11000.vertAlign = "bottom";
+		self.round_11000.x = -5; 
+		self.round_11000.y = -245; 
+		self.round_11000.fontscale = 1.2;
+		self.round_11000.label = "^1Round 11000 : ^7";
+		self.round_11000.alpha = 1;
+		self.round_11000 setText(level.timestamps[17]);
+	}
+
+	wait 10;
+	self.round_30 destroy();
+	self.round_50 destroy();
+	self.round_70 destroy();
+	self.round_100 destroy();
+	self.round_150 destroy();
+	self.round_200 destroy();
+	self.round_1000 destroy();
+	self.round_2000 destroy();
+	self.round_3000 destroy();
+	self.round_4000 destroy();
+	self.round_5000 destroy();
+	self.round_6000 destroy();
+	self.round_7000 destroy();
+	self.round_8000 destroy();
+	self.round_9000 destroy();
+	self.round_10000 destroy();
+	self.round_11000 destroy();
+}
+
+show_split()
+{
+	level endon("end_game");
+
+    switch (level.round_number)
+    {
+		case 30:
+        case 50:
+        case 70:
+        case 100:
+        case 150:
+        case 200:
+		case 1000:
+		case 2000:
+		case 3000:
+		case 4000:
+		case 5000:
+		case 6000:
+		case 7000:
+		case 8000:
+		case 9000:
+		case 10000:
+		case 11000:
+            break;
+        default:
+            return;
+    }
+
+    timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+	level.timestamps[level.timestamps.size] = timestamp;
+	iPrintLnBold("Round " + (level.round_number) + ": ^1" + timestamp);
+}
+
+convert_time(seconds)
+{
+	hours = 0;
+	minutes = 0;
+	
+	if (seconds > 59)
+	{
+		minutes = int(seconds / 60);
+
+		seconds = int(seconds * 1000) % (60 * 1000);
+		seconds = seconds * 0.001;
+
+		if (minutes > 59)
+		{
+			hours = int(minutes / 60);
+			minutes = int(minutes * 1000) % (60 * 1000);
+			minutes = minutes * 0.001;
+		}
+	}
+
+	str_hours = hours;
+	if (hours < 10)
+		str_hours = "0" + hours;
+
+	str_minutes = minutes;
+	if (minutes < 10 && hours > 0)
+		str_minutes = "0" + minutes;
+
+	str_seconds = seconds;
+	if (seconds < 10)
+		str_seconds = "0" + seconds;
+
+	if (hours == 0)
+		combined = "" + str_minutes  + ":" + str_seconds;
+	else
+		combined = "" + str_hours  + ":" + str_minutes  + ":" + str_seconds;
+
+	return combined;
 }
 
 //////////////////////////
@@ -678,7 +1052,7 @@ trap_timer_check()
 		{
 			if (level.script == "nazi_zombie_asylum") //ver
 			{
-				if(player_points == (self.score + 1000) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
+				if(player_points == (self.score + 1000) && level.round_number > 1) //use essa função em mapas que a trap custa 1000 pontos
         		{
         	    self.activate_timer = true;
         	    wait 50;    // You dont really need this, it prevents showing two timers when two traps are active
@@ -687,7 +1061,7 @@ trap_timer_check()
 
 			if (level.script == "nazi_zombie_factory") //der
 			{
-				if(player_points == (self.score + 1000) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
+				if(player_points == (self.score + 1000) && level.round_number > 1) //use essa função em mapas que a trap custa 1000 pontos
         		{
         	    self.activate_timer = true;
         	    wait 50;    // You dont really need this, it prevents showing two timers when two traps are active
@@ -696,7 +1070,7 @@ trap_timer_check()
 
 			if (level.script == "nazi_zombie_sumpf") //snn
 			{
-				if(player_points == (self.score + 1000) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
+				if(player_points == (self.score + 1000) && level.round_number > 1) //use essa função em mapas que a trap custa 1000 pontos
         		{
         	    self.activate_timer = true;
         	    wait 115;    // You dont really need this, it prevents showing two timers when two traps are active
@@ -725,7 +1099,7 @@ zipline_check()
 		{
 			if (level.script == "nazi_zombie_sumpf") //snn
 			{
-				if(player_points == (self.score + 1500) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
+				if(player_points == (self.score + 1500) && level.round_number > 1) //use essa função em mapas que a trap custa 1000 pontos
         		{
         	    self.activate_zipline = true;
         	    wait 46;    // You dont really need this, it prevents showing two timers when two traps are active
@@ -754,7 +1128,7 @@ flogger_check()
 		{
 			if (level.script == "nazi_zombie_sumpf") //snn
 			{
-				if(player_points == (self.score + 750) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
+				if(player_points == (self.score + 750) && level.round_number > 1) //use essa função em mapas que a trap custa 1000 pontos
         		{
         	    self.activate_flogger = true;
         	    wait 76;    // You dont really need this, it prevents showing two timers when two traps are active
