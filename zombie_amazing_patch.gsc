@@ -15,15 +15,66 @@ init()
 	setDvar("player_sprintStrafeSpeedScale", 1);
 	level thread onPlayerConnect();
 
-	level.timer_hud = 0;
-	level.round_timer_hud = 0;
-	level.box_hit_hud = 0;
-	level.sph_hud = 0;
-	level.next_dog_hud = 0;
-	level.health_hud = 0;
-	level.zombie_counter_hud = 0;
-	level.trap_timer_hud = 0;
-	level.timestamps[0] = 0;
+	//comandos
+
+	if ( GetDvar ( "lobby_timer" ) == "")
+		setDvar ( "lobby_timer", 1 );
+	if ( GetDvarInt ( "lobby_timer" ) > 1)
+		setDvar ( "lobby_timer", 1 );
+
+	if ( GetDvar ( "round_timer" ) == "")
+		setDvar ( "round_timer", 1 );
+	if ( GetDvarInt ( "round_timer" ) > 1)
+		setDvar ( "round_timer", 1 );
+
+	if ( GetDvar ( "sph" ) == "")
+		setDvar ( "sph", 0 );
+	if ( GetDvarInt ( "sph" ) > 1)
+		setDvar ( "sph", 1 );
+
+	if ( GetDvar ( "zombie_counter" ) == "")
+		setDvar ( "zombie_counter", 0 );
+	if ( GetDvarInt ( "zombie_counter" ) > 1)
+		setDvar ( "zombie_counter", 1 );
+
+	if ( GetDvar ( "hp" ) == "")
+		setDvar ( "hp", 0 );
+	if ( GetDvarInt ( "hp" ) > 1)
+		setDvar ( "hp", 1 );
+
+	if ( GetDvar ( "trap_timer" ) == "")
+		setDvar ( "trap_timer", 0 );
+	if ( GetDvarInt ( "trap_timer" ) > 1)
+		setDvar ( "trap_timer", 1 );
+
+	if ( GetDvar ( "box_hits" ) == "")
+		setDvar ( "box_hits", 0 );
+	if ( GetDvarInt ( "box_hits" ) > 1)
+		setDvar ( "box_hits", 1 );
+
+	if ( GetDvar ( "next_dog" ) == "")
+		setDvar ( "next_dog", 0 );
+	if ( GetDvarInt ( "next_dog" ) > 1)
+		setDvar ( "next_dog", 1 );
+
+	level.round_30_timer = 0;
+	level.round_50_timer = 0;
+	level.round_70_timer = 0;
+	level.round_100_timer = 0;
+	level.round_150_timer = 0;
+	level.round_200_timer = 0;
+	level.round_1000_timer = 0;
+	level.round_2000_timer = 0;
+	level.round_3000_timer = 0;
+	level.round_4000_timer = 0;
+	level.round_5000_timer = 0;
+	level.round_6000_timer = 0;
+	level.round_7000_timer = 0;
+	level.round_8000_timer = 0;
+	level.round_9000_timer = 0;
+	level.round_10000_timer = 0;
+	level.round_11000_timer = 0;
+	level.round_12000_timer = 0;
 }
 
 onPlayerConnect()
@@ -161,6 +212,7 @@ start_message()
 ////////////////////
 readchat() 
 {
+	player = get_players();
     self endon("end_game");
     while (true) 
     {
@@ -171,17 +223,33 @@ readchat()
             continue;
 
         switch(msg[0])
-        {
-            case "!lobby": level.timer_hud = !level.timer_hud; break; 
-			case "!round": level.round_timer_hud = !level.round_timer_hud; break; 
-			case "!box": level.box_hit_hud = !level.box_hit_hud; break; 
-			case "!sph": level.sph_hud = !level.sph_hud; break; 
-			case "!dog": level.next_dog_hud = !level.next_dog_hud; break; 
-			case "!health": level.health_hud = !level.health_hud; break;
-			case "!zombie": level.zombie_counter_hud = !level.zombie_counter_hud; break;
-			case "!trap": level.trap_timer_hud = !level.trap_timer_hud; break;
-			case "!times": show_all_timestamps(); break;
-        }
+		{
+			case "!time":
+			switch(msg[1])
+			{
+				case "30": show_round_30(); break;
+				case "50": show_round_50(); break;
+				case "70": show_round_70(); break;
+				case "100": show_round_100(); break;
+				case "150": show_round_150(); break;
+				case "200": show_round_200(); break;
+				case "1000": show_round_1000(); break;
+				case "2000": show_round_2000(); break;
+				case "3000": show_round_3000(); break;
+				case "4000": show_round_4000(); break;
+				case "5000": show_round_5000(); break;
+				case "6000": show_round_6000(); break;
+				case "7000": show_round_7000(); break;
+				case "8000": show_round_8000(); break;
+				case "9000": show_round_9000(); break;
+				case "10000": show_round_10000(); break;
+				case "11000": show_round_11000(); break;
+				case "12000": show_round_12000(); break;
+				default: iprintlnbold("^1Invalid Command"); break;
+			}
+			break;
+			default: iprintlnbold("^1Invalid Command"); break;
+		}
     }
 }
 
@@ -205,7 +273,7 @@ lobby_timer()
 	while(true)
 	{
 		wait 0.1;
-		if (level.timer_hud)
+		if ( GetDvarInt ( "lobby_timer" ) == 1)
 		{
 			self.lobby_timer.alpha = 1;
 		}
@@ -230,9 +298,9 @@ round_timer()
 	while(true)
 	{
 		wait 0.1;
-		if (level.round_timer_hud)
+		if ( GetDvarInt ( "round_timer" ) == 1)
 		{
-			if (level.timer_hud)
+			if ( GetDvarInt ( "lobby_timer" ) == 1)
 			{
 				self.round_timer.y = 20;
 			}
@@ -274,8 +342,6 @@ reset_timer(){
 
 is_round_end()
 {
-
-    //if(GetAiArray("axis").size) return false;
     if( GetAiSpeciesArray( "axis", "all" ).size ) return false;
 
     if(level.zombie_total>0) return false;
@@ -286,335 +352,334 @@ is_round_end()
 //////////////////
 //  SHOW TIMES  //
 //////////////////
-show_all_timestamps()
+show_round_30()
 {
-	//reset layouts
-	self.round_30 destroy();
-	self.round_50 destroy();
-	self.round_70 destroy();
-	self.round_100 destroy();
-	self.round_150 destroy();
-	self.round_200 destroy();
-	self.round_1000 destroy();
-	self.round_2000 destroy();
-	self.round_3000 destroy();
-	self.round_4000 destroy();
-	self.round_5000 destroy();
-	self.round_6000 destroy();
-	self.round_7000 destroy();
-	self.round_8000 destroy();
-	self.round_9000 destroy();
-	self.round_10000 destroy();
-	self.round_11000 destroy();
-
-	if (level.round_number > 29)
+	if (level.round_number < 30)
 	{
-		self.round_30 = create_simple_hud( self );
-		self.round_30.alignX = "right"; 
-		self.round_30.alignY = "bottom";
-		self.round_30.horzAlign = "right"; 
-		self.round_30.vertAlign = "bottom";
-		self.round_30.x = -5; 
-		self.round_30.y = -85; 
-		self.round_30.fontscale = 1.2;
-		self.round_30.label = "^1Round 30 : ^7";
-		self.round_30.alpha = 1;
-		self.round_30 setText(level.timestamps[1]);
+		iprintlnbold("No Time Available");
 	}
-
-	if (level.round_number > 49)
+	else
 	{
-		self.round_50 = create_simple_hud( self );
-		self.round_50.alignX = "right"; 
-		self.round_50.alignY = "bottom";
-		self.round_50.horzAlign = "right"; 
-		self.round_50.vertAlign = "bottom";
-		self.round_50.x = -5; 
-		self.round_50.y = -95; 
-		self.round_50.fontscale = 1.2;
-		self.round_50.label = "^1Round 50 : ^7";
-		self.round_50.alpha = 1;
-		self.round_50 setText(level.timestamps[2]);
+		iprintlnbold("Round 30 : ^1" + level.round_30_timer);
 	}
+}
 
-	if (level.round_number > 69)
+show_round_50()
+{
+	if (level.round_number < 50)
 	{
-		self.round_70 = create_simple_hud( self );
-		self.round_70.alignX = "right"; 
-		self.round_70.alignY = "bottom";
-		self.round_70.horzAlign = "right"; 
-		self.round_70.vertAlign = "bottom";
-		self.round_70.x = -5; 
-		self.round_70.y = -105; 
-		self.round_70.fontscale = 1.2;
-		self.round_70.label = "^1Round 70 : ^7";
-		self.round_70.alpha = 1;
-		self.round_70 setText(level.timestamps[3]);
+		iprintlnbold("No Time Available");
 	}
-
-	if (level.round_number > 99)
+	else
 	{
-		self.round_100 = create_simple_hud( self );
-		self.round_100.alignX = "right"; 
-		self.round_100.alignY = "bottom";
-		self.round_100.horzAlign = "right"; 
-		self.round_100.vertAlign = "bottom";
-		self.round_100.x = -5; 
-		self.round_100.y = -115; 
-		self.round_100.fontscale = 1.2;
-		self.round_100.label = "^1Round 100 : ^7";
-		self.round_100.alpha = 1;
-		self.round_100 setText(level.timestamps[4]);
+		iprintlnbold("Round 50 : ^1" + level.round_50_timer);
 	}
+}
 
-	if (level.round_number > 149)
+show_round_70()
+{
+	if (level.round_number < 70)
 	{
-		self.round_150 = create_simple_hud( self );
-		self.round_150.alignX = "right"; 
-		self.round_150.alignY = "bottom";
-		self.round_150.horzAlign = "right"; 
-		self.round_150.vertAlign = "bottom";
-		self.round_150.x = -5; 
-		self.round_150.y = -125; 
-		self.round_150.fontscale = 1.2;
-		self.round_150.label = "^1Round 150 : ^7";
-		self.round_150.alpha = 1;
-		self.round_150 setText(level.timestamps[5]);
+		iprintlnbold("No Time Available");
 	}
-
-	if (level.round_number > 199)
+	else
 	{
-		self.round_200 = create_simple_hud( self );
-		self.round_200.alignX = "right"; 
-		self.round_200.alignY = "bottom";
-		self.round_200.horzAlign = "right"; 
-		self.round_200.vertAlign = "bottom";
-		self.round_200.x = -5; 
-		self.round_200.y = -135; 
-		self.round_200.fontscale = 1.2;
-		self.round_200.label = "^1Round 200 : ^7";
-		self.round_200.alpha = 1;
-		self.round_200 setText(level.timestamps[6]);
+		iprintlnbold("Round 70 : ^1" + level.round_70_timer);
 	}
+}
 
-	if (level.round_number > 999)
+show_round_100()
+{
+	if (level.round_number < 100)
 	{
-		self.round_1000 = create_simple_hud( self );
-		self.round_1000.alignX = "right"; 
-		self.round_1000.alignY = "bottom";
-		self.round_1000.horzAlign = "right"; 
-		self.round_1000.vertAlign = "bottom";
-		self.round_1000.x = -5; 
-		self.round_1000.y = -145; 
-		self.round_1000.fontscale = 1.2;
-		self.round_1000.label = "^1Round 1000 : ^7";
-		self.round_1000.alpha = 1;
-		self.round_1000 setText(level.timestamps[7]);
+		iprintlnbold("No Time Available");
 	}
-
-	if (level.round_number > 1999)
+	else
 	{
-		self.round_2000 = create_simple_hud( self );
-		self.round_2000.alignX = "right"; 
-		self.round_2000.alignY = "bottom";
-		self.round_2000.horzAlign = "right"; 
-		self.round_2000.vertAlign = "bottom";
-		self.round_2000.x = -5; 
-		self.round_2000.y = -155; 
-		self.round_2000.fontscale = 1.2;
-		self.round_2000.label = "^1Round 2000 : ^7";
-		self.round_2000.alpha = 1;
-		self.round_2000 setText(level.timestamps[8]);
+		iprintlnbold("Round 100 : ^1" + level.round_100_timer);
 	}
+}
 
-	if (level.round_number > 2999)
+show_round_150()
+{
+	if (level.round_number < 150)
 	{
-		self.round_3000 = create_simple_hud( self );
-		self.round_3000.alignX = "right"; 
-		self.round_3000.alignY = "bottom";
-		self.round_3000.horzAlign = "right"; 
-		self.round_3000.vertAlign = "bottom";
-		self.round_3000.x = -5; 
-		self.round_3000.y = -165; 
-		self.round_3000.fontscale = 1.2;
-		self.round_3000.label = "^1Round 3000 : ^7";
-		self.round_3000.alpha = 1;
-		self.round_3000 setText(level.timestamps[9]);
+		iprintlnbold("No Time Available");
 	}
-
-	if (level.round_number > 3999)
+	else
 	{
-		self.round_4000 = create_simple_hud( self );
-		self.round_4000.alignX = "right"; 
-		self.round_4000.alignY = "bottom";
-		self.round_4000.horzAlign = "right"; 
-		self.round_4000.vertAlign = "bottom";
-		self.round_4000.x = -5; 
-		self.round_4000.y = -175; 
-		self.round_4000.fontscale = 1.2;
-		self.round_4000.label = "^1Round 4000 : ^7";
-		self.round_4000.alpha = 1;
-		self.round_4000 setText(level.timestamps[10]);
+		iprintlnbold("Round 150 : ^1" + level.round_150_timer);
 	}
+}
 
-	if (level.round_number > 4999)
+show_round_200()
+{
+	if (level.round_number < 200)
 	{
-		self.round_5000 = create_simple_hud( self );
-		self.round_5000.alignX = "right"; 
-		self.round_5000.alignY = "bottom";
-		self.round_5000.horzAlign = "right"; 
-		self.round_5000.vertAlign = "bottom";
-		self.round_5000.x = -5; 
-		self.round_5000.y = -185; 
-		self.round_5000.fontscale = 1.2;
-		self.round_5000.label = "^1Round 5000 : ^7";
-		self.round_5000.alpha = 1;
-		self.round_5000 setText(level.timestamps[11]);
+		iprintlnbold("No Time Available");
 	}
-
-	if (level.round_number > 5999)
+	else
 	{
-		self.round_6000 = create_simple_hud( self );
-		self.round_6000.alignX = "right"; 
-		self.round_6000.alignY = "bottom";
-		self.round_6000.horzAlign = "right"; 
-		self.round_6000.vertAlign = "bottom";
-		self.round_6000.x = -5; 
-		self.round_6000.y = -195; 
-		self.round_6000.fontscale = 1.2;
-		self.round_6000.label = "^1Round 6000 : ^7";
-		self.round_6000.alpha = 1;
-		self.round_6000 setText(level.timestamps[12]);
+		iprintlnbold("Round 200 : ^1" + level.round_200_timer);
 	}
+}
 
-	if (level.round_number > 6999)
+show_round_1000()
+{
+	if (level.round_number < 1000)
 	{
-		self.round_7000 = create_simple_hud( self );
-		self.round_7000.alignX = "right"; 
-		self.round_7000.alignY = "bottom";
-		self.round_7000.horzAlign = "right"; 
-		self.round_7000.vertAlign = "bottom";
-		self.round_7000.x = -5; 
-		self.round_7000.y = -205; 
-		self.round_7000.fontscale = 1.2;
-		self.round_7000.label = "^1Round 7000 : ^7";
-		self.round_7000.alpha = 1;
-		self.round_7000 setText(level.timestamps[13]);
+		iprintlnbold("No Time Available");
 	}
-
-	if (level.round_number > 7999)
+	else
 	{
-		self.round_8000 = create_simple_hud( self );
-		self.round_8000 = create_simple_hud( self );
-		self.round_8000.alignX = "right"; 
-		self.round_8000.alignX = "right"; 
-		self.round_8000.alignY = "bottom";
-		self.round_8000.horzAlign = "right"; 
-		self.round_8000.vertAlign = "bottom";
-		self.round_8000.x = -5; 
-		self.round_8000.y = -215; 
-		self.round_8000.fontscale = 1.2;
-		self.round_8000.label = "^1Round 8000 : ^7";
-		self.round_8000.alpha = 1;
-		self.round_8000 setText(level.timestamps[14]);
+		iprintlnbold("Round 1000 : ^1" + level.round_1000_timer);
 	}
+}
 
-	if (level.round_number > 8999)
+show_round_2000()
+{
+	if (level.round_number < 2000)
 	{
-		self.round_9000 = create_simple_hud( self );
-		self.round_9000.alignX = "right"; 
-		self.round_9000.alignY = "bottom";
-		self.round_9000.horzAlign = "right"; 
-		self.round_9000.vertAlign = "bottom";
-		self.round_9000.x = -5; 
-		self.round_9000.y = -225; 
-		self.round_9000.fontscale = 1.2;
-		self.round_9000.label = "^1Round 9000 : ^7";
-		self.round_9000.alpha = 1;
-		self.round_9000 setText(level.timestamps[15]);
+		iprintlnbold("No Time Available");
 	}
-
-	if (level.round_number > 9999)
+	else
 	{
-		self.round_10000 = create_simple_hud( self );
-		self.round_10000.alignX = "right"; 
-		self.round_10000.alignY = "bottom";
-		self.round_10000.horzAlign = "right"; 
-		self.round_10000.vertAlign = "bottom";
-		self.round_10000.x = -5; 
-		self.round_10000.y = -235; 
-		self.round_10000.fontscale = 1.2;
-		self.round_10000.label = "^1Round 10000 : ^7";
-		self.round_10000.alpha = 1;
-		self.round_10000 setText(level.timestamps[16]);
+		iprintlnbold("Round 2000 : ^1" + level.round_2000_timer);
 	}
+}
 
-	if (level.round_number > 10999)
+show_round_3000()
+{
+	if (level.round_number < 3000)
 	{
-		self.round_11000 = create_simple_hud( self );
-		self.round_11000.alignX = "right"; 
-		self.round_11000.alignY = "bottom";
-		self.round_11000.horzAlign = "right"; 
-		self.round_11000.vertAlign = "bottom";
-		self.round_11000.x = -5; 
-		self.round_11000.y = -245; 
-		self.round_11000.fontscale = 1.2;
-		self.round_11000.label = "^1Round 11000 : ^7";
-		self.round_11000.alpha = 1;
-		self.round_11000 setText(level.timestamps[17]);
+		iprintlnbold("No Time Available");
 	}
+	else
+	{
+		iprintlnbold("Round 3000 : ^1" + level.round_3000_timer);
+	}
+}
 
-	wait 10;
-	self.round_30 destroy();
-	self.round_50 destroy();
-	self.round_70 destroy();
-	self.round_100 destroy();
-	self.round_150 destroy();
-	self.round_200 destroy();
-	self.round_1000 destroy();
-	self.round_2000 destroy();
-	self.round_3000 destroy();
-	self.round_4000 destroy();
-	self.round_5000 destroy();
-	self.round_6000 destroy();
-	self.round_7000 destroy();
-	self.round_8000 destroy();
-	self.round_9000 destroy();
-	self.round_10000 destroy();
-	self.round_11000 destroy();
+show_round_4000()
+{
+	if (level.round_number < 4000)
+	{
+		iprintlnbold("No Time Available");
+	}
+	else
+	{
+		iprintlnbold("Round 4000 : ^1" + level.round_4000_timer);
+	}
+}
+
+show_round_5000()
+{
+	if (level.round_number < 5000)
+	{
+		iprintlnbold("No Time Available");
+	}
+	else
+	{
+		iprintlnbold("Round 5000 : ^1" + level.round_5000_timer);
+	}
+}
+
+show_round_6000()
+{
+	if (level.round_number < 6000)
+	{
+		iprintlnbold("No Time Available");
+	}
+	else
+	{
+		iprintlnbold("Round 6000 : ^1" + level.round_6000_timer);
+	}
+}
+
+show_round_7000()
+{
+	if (level.round_number < 7000)
+	{
+		iprintlnbold("No Time Available");
+	}
+	else
+	{
+		iprintlnbold("Round 7000 : ^1" + level.round_7000_timer);
+	}
+}
+
+show_round_8000()
+{
+	if (level.round_number < 8000)
+	{
+		iprintlnbold("No Time Available");
+	}
+	else
+	{
+		iprintlnbold("Round 8000 : ^1" + level.round_8000_timer);
+	}
+}
+
+show_round_9000()
+{
+	if (level.round_number < 9000)
+	{
+		iprintlnbold("No Time Available");
+	}
+	else
+	{
+		iprintlnbold("Round 9000 : ^1" + level.round_9000_timer);
+	}
+}
+
+show_round_10000()
+{
+	if (level.round_number < 10000)
+	{
+		iprintlnbold("No Time Available");
+	}
+	else
+	{
+		iprintlnbold("Round 10000 : ^1" + level.round_10000_timer);
+	}
+}
+
+show_round_11000()
+{
+	if (level.round_number < 11000)
+	{
+		iprintlnbold("No Time Available");
+	}
+	else
+	{
+		iprintlnbold("Round 11000 : ^1" + level.round_11000_timer);
+	}
+}
+
+show_round_12000()
+{
+	if (level.round_number < 12000)
+	{
+		iprintlnbold("No Time Available");
+	}
+	else
+	{
+		iprintlnbold("Round 12000 : ^1" + level.round_12000_timer);
+	}
 }
 
 show_split()
 {
 	level endon("end_game");
 
-    switch (level.round_number)
-    {
-		case 30:
-        case 50:
-        case 70:
-        case 100:
-        case 150:
-        case 200:
-		case 1000:
-		case 2000:
-		case 3000:
-		case 4000:
-		case 5000:
-		case 6000:
-		case 7000:
-		case 8000:
-		case 9000:
-		case 10000:
-		case 11000:
-            break;
-        default:
-            return;
-    }
-
-    timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
-	level.timestamps[level.timestamps.size] = timestamp;
-	iPrintLnBold("Round " + (level.round_number) + ": ^1" + timestamp);
+	if (level.round_number == 30)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_30_timer = timestamp;
+		iPrintLnBold("Round 30 : ^1" + timestamp);
+	}
+	else if (level.round_number == 50)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_50_timer = timestamp;
+		iPrintLnBold("Round 50 : ^1" + timestamp);
+	}
+	else if (level.round_number == 70)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_70_timer = timestamp;
+		iPrintLnBold("Round 70 : ^1" + timestamp);
+	}
+	else if (level.round_number == 100)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_100_timer = timestamp;
+		iPrintLnBold("Round 100 : ^1" + timestamp);
+	}
+	else if (level.round_number == 150)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_150_timer = timestamp;
+		iPrintLnBold("Round 150 : ^1" + timestamp);
+	}
+	else if (level.round_number == 200)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_200_timer = timestamp;
+		iPrintLnBold("Round 200 : ^1" + timestamp);
+	}
+	else if (level.round_number == 1000)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_1000_timer = timestamp;
+		iPrintLnBold("Round 1000 : ^1" + timestamp);
+	}
+	else if (level.round_number == 2000)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_2000_timer = timestamp;
+		iPrintLnBold("Round 2000 : ^1" + timestamp);
+	}
+	else if (level.round_number == 3000)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_3000_timer = timestamp;
+		iPrintLnBold("Round 3000 : ^1" + timestamp);
+	}
+	else if (level.round_number == 4000)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_4000_timer = timestamp;
+		iPrintLnBold("Round 4000 : ^1" + timestamp);
+	}
+	else if (level.round_number == 5000)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_5000_timer = timestamp;
+		iPrintLnBold("Round 5000 : ^1" + timestamp);
+	}
+	else if (level.round_number == 6000)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_6000_timer = timestamp;
+		iPrintLnBold("Round 6000 : ^1" + timestamp);
+	}
+	else if (level.round_number == 7000)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_7000_timer = timestamp;
+		iPrintLnBold("Round 7000 : ^1" + timestamp);
+	}
+	else if (level.round_number == 8000)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_8000_timer = timestamp;
+		iPrintLnBold("Round 8000 : ^1" + timestamp);
+	}
+	else if (level.round_number == 9000)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_9000_timer = timestamp;
+		iPrintLnBold("Round 9000 : ^1" + timestamp);
+	}
+	else if (level.round_number == 10000)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_10000_timer = timestamp;
+		iPrintLnBold("Round 10000 : ^1" + timestamp);
+	}
+	else if (level.round_number == 11000)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_11000_timer = timestamp;
+		iPrintLnBold("Round 11000 : ^1" + timestamp);
+	}
+	else if (level.round_number == 12000)
+	{
+		timestamp = convert_time(int(getTime() / 1000) - level.FRFIX_START);
+		level.round_12000_timer = timestamp;
+		iPrintLnBold("Round 11000 : ^1" + timestamp);
+	}
 }
 
 convert_time(seconds)
@@ -696,13 +761,13 @@ sph_hud()
 	while(true)
 	{
 		wait 0.1;
-		if (level.sph_hud)
+		if ( GetDvarInt ( "sph" ) == 1)
 		{
-			if (level.box_hit_hud)
+			if ( GetDvarInt ( "box_hits" ) == 1)
 			{
-				if (level.round_timer_hud)
+				if ( GetDvarInt ( "round_timer" ) == 1)
 				{
-					if (level.timer_hud)
+					if ( GetDvarInt ( "lobby_timer" ) == 1)
 					{
 						self.sph.y = 50;
 					}
@@ -713,7 +778,7 @@ sph_hud()
 				}
 				else
 				{
-					if (level.timer_hud)
+					if ( GetDvarInt ( "lobby_timer" ) == 1)
 					{
 						self.sph.y = 35;
 					}
@@ -725,9 +790,9 @@ sph_hud()
 			}
 			else
 			{
-				if (level.round_timer_hud)
+				if ( GetDvarInt ( "round_timer" ) == 1)
 				{
-					if (level.timer_hud)
+					if ( GetDvarInt ( "lobby_timer" ) == 1)
 					{
 						self.sph.y = 35;
 					}
@@ -738,7 +803,7 @@ sph_hud()
 				}
 				else
 				{
-					if (level.timer_hud)
+					if ( GetDvarInt ( "lobby_timer" ) == 1)
 					{
 						self.sph.y = 20;
 					}
@@ -793,15 +858,15 @@ dog_tracker()
 		while(true)
 		{
 			wait 0.1;
-			if (level.next_dog_hud)
+			if ( GetDvarInt ( "next_dog" ) == 1)
 			{
-				if(level.sph_hud)
+				if ( GetDvarInt ( "sph" ) == 1)
 				{
-					if (level.box_hit_hud)
+					if ( GetDvarInt ( "box_hits" ) == 1)
 					{
-						if (level.round_timer_hud)
+						if ( GetDvarInt ( "round_timer" ) == 1)
 						{
-							if (level.timer_hud)
+							if ( GetDvarInt ( "lobby_timer" ) == 1)
 							{
 								self.next_dog.y = 65;
 							}
@@ -812,7 +877,7 @@ dog_tracker()
 						}
 						else
 						{
-							if (level.timer_hud)
+							if ( GetDvarInt ( "lobby_timer" ) == 1)
 							{
 								self.next_dog.y = 50;
 							}
@@ -824,9 +889,9 @@ dog_tracker()
 					}
 					else
 					{
-						if (level.round_timer_hud)
+						if ( GetDvarInt ( "round_timer" ) == 1)
 						{
-							if (level.timer_hud)
+							if ( GetDvarInt ( "lobby_timer" ) == 1)
 							{
 								self.next_dog.y = 50;
 							}
@@ -837,7 +902,7 @@ dog_tracker()
 						}
 						else
 						{
-							if (level.timer_hud)
+							if ( GetDvarInt ( "lobby_timer" ) == 1)
 							{
 								self.next_dog.y = 35;
 							}
@@ -850,11 +915,11 @@ dog_tracker()
 				}
 				else
 				{
-					if (level.box_hit_hud)
+					if ( GetDvarInt ( "box_hits" ) == 1)
 					{
-						if (level.round_timer_hud)
+						if ( GetDvarInt ( "round_timer" ) == 1)
 						{
-							if (level.timer_hud)
+							if ( GetDvarInt ( "lobby_timer" ) == 1)
 							{
 								self.next_dog.y = 50;
 							}
@@ -865,7 +930,7 @@ dog_tracker()
 						}
 						else
 						{
-							if (level.timer_hud)
+							if ( GetDvarInt ( "lobby_timer" ) == 1)
 							{
 								self.next_dog.y = 35;
 							}
@@ -877,9 +942,9 @@ dog_tracker()
 					}
 					else
 					{
-						if (level.round_timer_hud)
+						if ( GetDvarInt ( "round_timer" ) == 1)
 						{
-							if (level.timer_hud)
+							if ( GetDvarInt ( "lobby_timer" ) == 1)
 							{
 								self.next_dog.y = 35;
 							}
@@ -890,7 +955,7 @@ dog_tracker()
 						}
 						else
 						{
-							if (level.timer_hud)
+							if ( GetDvarInt ( "lobby_timer" ) == 1)
 							{
 								self.next_dog.y = 20;
 							}
@@ -929,7 +994,7 @@ health()
 	while(true)
 	{
 		wait 0.1;
-		if (level.health_hud)
+		if ( GetDvarInt ( "hp" ) == 1)
 		{
 			self.vida_restante.alpha = 1;
 			self.vida_restante setvalue(self.health);
@@ -959,7 +1024,7 @@ zombie_counter()
     for(;;)
 	{
 		wait 0.05;
-		if (level.zombie_counter_hud)
+		if ( GetDvarInt ( "zombie_counter" ) == 1)
 		{
 			self.zombiecounter.alpha = 1;
 			self.zombiecounter setvalue(level.zombie_total + get_enemy_count());
@@ -1003,11 +1068,11 @@ box_hits()
 	while(true)
 	{
 		wait 0.1;
-		if (level.box_hit_hud)
+		if ( GetDvarInt ( "box_hits" ) == 1)
 		{
-			if (level.round_timer_hud)
+			if ( GetDvarInt ( "round_timer" ) == 1)
 			{
-				if (level.timer_hud)
+				if ( GetDvarInt ( "lobby_timer" ) == 1)
 				{
 					self.box_hits.y = 35;
 				}
@@ -1018,7 +1083,7 @@ box_hits()
 			}
 			else
 			{
-				if (level.timer_hud)
+				if ( GetDvarInt ( "lobby_timer" ) == 1)
 				{
 					self.box_hits.y = 20;
 				}
@@ -1048,11 +1113,11 @@ trap_timer_check()
         player_points = self.score;
 		wait 0.1;
 
-		if (level.trap_timer_hud)
+		if ( GetDvarInt ( "trap_timer" ) == 1)
 		{
 			if (level.script == "nazi_zombie_asylum") //ver
 			{
-				if(player_points == (self.score + 1000) && level.round_number > 1) //use essa função em mapas que a trap custa 1000 pontos
+				if(player_points == (self.score + 1000) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
         		{
         	    self.activate_timer = true;
         	    wait 50;    // You dont really need this, it prevents showing two timers when two traps are active
@@ -1061,7 +1126,7 @@ trap_timer_check()
 
 			if (level.script == "nazi_zombie_factory") //der
 			{
-				if(player_points == (self.score + 1000) && level.round_number > 1) //use essa função em mapas que a trap custa 1000 pontos
+				if(player_points == (self.score + 1000) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
         		{
         	    self.activate_timer = true;
         	    wait 50;    // You dont really need this, it prevents showing two timers when two traps are active
@@ -1070,7 +1135,7 @@ trap_timer_check()
 
 			if (level.script == "nazi_zombie_sumpf") //snn
 			{
-				if(player_points == (self.score + 1000) && level.round_number > 1) //use essa função em mapas que a trap custa 1000 pontos
+				if(player_points == (self.score + 1000) && level.round_number > 14) //use essa função em mapas que a trap custa 1000 pontos
         		{
         	    self.activate_timer = true;
         	    wait 115;    // You dont really need this, it prevents showing two timers when two traps are active
@@ -1095,11 +1160,11 @@ zipline_check()
         player_points = self.score;
 		wait 0.1;
 
-		if (level.trap_timer_hud)
+		if ( GetDvarInt ( "trap_timer" ) == 1)
 		{
 			if (level.script == "nazi_zombie_sumpf") //snn
 			{
-				if(player_points == (self.score + 1500) && level.round_number > 1) //use essa função em mapas que a trap custa 1000 pontos
+				if(player_points == (self.score + 1500) && level.round_number > 14) //use essa função em mapas que a trap custa 1500 pontos
         		{
         	    self.activate_zipline = true;
         	    wait 46;    // You dont really need this, it prevents showing two timers when two traps are active
@@ -1124,11 +1189,11 @@ flogger_check()
         player_points = self.score;
 		wait 0.1;
 		
-		if (level.trap_timer_hud)
+		if ( GetDvarInt ( "trap_timer" ) == 1)
 		{
 			if (level.script == "nazi_zombie_sumpf") //snn
 			{
-				if(player_points == (self.score + 750) && level.round_number > 1) //use essa função em mapas que a trap custa 1000 pontos
+				if(player_points == (self.score + 750) && level.round_number > 14) //use essa função em mapas que a trap custa 750 pontos
         		{
         	    self.activate_flogger = true;
         	    wait 76;    // You dont really need this, it prevents showing two timers when two traps are active
